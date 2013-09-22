@@ -68,11 +68,12 @@ def main():
 	run.scrape()
 
 def anls():
-	store = HDFStore('divvy.h5')
-	df = store['divvy']
+	store = HDFStore('hdf5/divvy.h5')
+	pd = store['divvy']
 	store.close()
+	df = reduce(lambda x,y: x.append(y),[pd[i] for i in pd.items])
 	df.index = df.timestamp
-	foo = map(lambda x: x[1],df.groupby('location_id'))
+	foo = map(lambda x: x[1],df.groupby('id'))
 	for i in range(len(foo)): foo[i]['diff'] = foo[i].availableBikes.diff()
 	for i in range(len(foo)): foo[i]['diff'].hist(range=[-5,5],bins=20)
 	plt.show()
